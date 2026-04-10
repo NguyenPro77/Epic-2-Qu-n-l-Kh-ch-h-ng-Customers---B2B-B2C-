@@ -87,6 +87,8 @@ SET customer_type=?,
 WHERE id=?
 ---
 
+---
+
 ### Các chức năng KHÔNG có
 
 - Không thêm customer thủ công
@@ -100,9 +102,9 @@ WHERE id=?
 
 ---
 
-Cấu trúc bảng cơ sở dữ liệu
+### Cấu trúc bảng cơ sở dữ liệu
 
-Bảng leads
+**Bảng leads**
 
 - id: ID
 - contact_name: Tên
@@ -111,7 +113,7 @@ Bảng leads
 - customer_type: Phân loại (B2B/B2C)
 - status: Trạng thái (New / Converted)
 
-Bảng customers
+**Bảng customers**
 
 - id: ID
 - customer_code: Mã định danh (KH001...)
@@ -122,7 +124,7 @@ Bảng customers
 - tier_id: Foreign Key liên kết bảng xếp hạng
 - is_deleted: Trạng thái xóa (0/1)
 
-Bảng customer_tiers
+**Bảng customer_tiers**
 
 - 1: Bạc
 - 2: Vàng
@@ -130,7 +132,7 @@ Bảng customer_tiers
 
 ---
 
-Công Nghệ Sử Dụng
+### Công Nghệ Sử Dụng
 
 - Core: Java Servlet (Jakarta EE)
 - Frontend: JSP + JSTL + Bootstrap
@@ -140,39 +142,38 @@ Công Nghệ Sử Dụng
 
 ---
 
-Cài Đặt & Chạy Dự Án
+### Cài Đặt & Chạy Dự Án
 
-Yêu cầu hệ thống:
+**Yêu cầu hệ thống:**
 
 - Java 17+
 - MySQL
 - Apache Tomcat 10
 - Git
 
-Hướng dẫn chạy môi trường Local:
+**Hướng dẫn chạy môi trường Local:**
 
-- Bước 1: Clone repository**
-  bash
+- **Bước 1: Clone repository**
+  ```bash
   git clone [https://github.com/your-repo/crm-leads-mvc.git](https://github.com/your-repo/crm-leads-mvc.git)
-Bước 2: Cấu hình Database
+**Bước 2: Cấu hình Database**
 
 - Tạo database mới: 
   `CREATE DATABASE crm_qlbanhang;`
 
 - Cấu hình thông số kết nối trong file `CustomerDAO.java`:
-  java
+  ```java
   private String jdbcURL = "jdbc:mysql://localhost:3306/crm_qlbanhang";
   private String jdbcUsername = "root";
   private String jdbcPassword = "";
----
 
-Bước 3: Build & Chạy
+**Bước 3: Build & Chạy**
 
 - Thực hiện Deploy project lên Server Tomcat
 - Khởi động (Run) server
 
 ---
 
-Bước 4: Truy cập
+**Bước 4: Truy cập**
 
-- Đường dẫn hệ thống: `http://localhost:8081/CRM_LEADS_MVC/customers`  
+- Đường dẫn hệ thống: `http://localhost:8081/CRM_LEADS_MVC/customers`
