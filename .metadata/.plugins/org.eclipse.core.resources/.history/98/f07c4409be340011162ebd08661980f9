@@ -1,0 +1,153 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page import="java.util.*" %>
+
+<%
+    // Khởi tạo Mock Data nếu list từ Controller bị null
+    if (request.getAttribute("list") == null) {
+        List<Map<String, String>> mockList = new ArrayList<>();
+        String[][] data = {
+            {"1","KH001", "Công ty TNHH AI", "0901234567", "ai@gmail.com", "B2B", "Kim Cương", "0102030405", ""},
+            {"2","KH002", "Nguyễn Văn A", "0911222333", "a@gmail.com", "B2C", "Vàng", "", "079090001234"},
+            {"3","KH003", "Công ty ABC", "0988888888", "abc@gmail.com", "B2B", "Bạc", "0304050607", ""}
+        };
+        for (String[] row : data) {
+            Map<String, String> c = new HashMap<>();
+            c.put("id", row[0]); c.put("customerCode", row[1]); c.put("name", row[2]);
+            c.put("phone", row[3]); c.put("email", row[4]); c.put("customerType", row[5]);
+            c.put("tierName", row[6]); c.put("taxCode", row[7]); c.put("identityNumber", row[8]);
+            mockList.add(c);
+        }
+        request.setAttribute("list", mockList);
+    }
+%>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>CRM - Quản lý Khách hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --crm-primary: #4361ee; --crm-secondary: #f8f9fa; }
+        body { background-color: #f0f2f5; font-family: 'Inter', sans-serif; color: #333; }
+        .main-card { background: white; border: none; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        .table thead { background-color: var(--crm-secondary); border-bottom: 2px solid #e9ecef; }
+        .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 15px; }
+        .customer-name { font-weight: 600; color: #1e293b; }
+        .badge-type { font-size: 0.7rem; padding: 5px 10px; }
+        .form-select-custom { border-radius: 8px; border: 1px solid #dee2e6; font-size: 0.85rem; transition: all 0.2s; }
+        .form-select-custom:focus { border-color: var(--crm-primary); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); }
+        .btn-save { border-radius: 8px; padding: 6px 16px; font-weight: 500; transition: all 0.3s; }
+        .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2); }
+    </style>
+</head>
+
+<body class="p-lg-5 p-3">
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">📋 Danh sách Khách hàng</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Hệ thống CRM</a></li>
+                    <li class="breadcrumb-item active">Quản lý đối tượng</li>
+                </ol>
+            </nav>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2">
+            <i class="bi bi-plus-lg"></i> Thêm khách hàng
+        </button>
+    </div>
+
+    <div class="card main-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Mã KH</th>
+                        <th>Thông tin khách hàng</th>
+                        <th>Định danh (MST/CCCD)</th>
+                        <th>Liên hệ</th>
+                        <th>Loại đối tượng</th>
+                        <th>Hạng thành viên</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="c" items="${list}">
+                        <tr>
+                            <form action="customers" method="post">
+                                <input type="hidden" name="id" value="${c.id}">
+                                
+                                <td class="ps-4">
+                                    <span class="badge bg-light text-primary border border-primary-subtle fw-bold">${c.customerCode}</span>
+                                </td>
+
+                                <td>
+                                    <div class="customer-name">${c.name}</div>
+                                    <small class="text-muted"><i class="bi bi-tag me-1"></i>ID System: #${c.id}</small>
+                                </td>
+
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${not empty c.taxCode}">
+                                            <span class="small text-muted">MST:</span> <code class="text-danger">${c.taxCode}</code>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="small text-muted">CCCD:</span> <code class="text-success">${c.identityNumber}</code>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+
+                                <td>
+                                    <div class="small"><i class="bi bi-telephone text-muted me-2"></i>${c.phone}</div>
+                                    <div class="small"><i class="bi bi-envelope text-muted me-2"></i>${c.email}</div>
+                                </td>
+
+                                <td>
+                                    <select name="type" class="form-select form-select-sm form-select-custom">
+                                        <option value="B2B" ${c.customerType == 'B2B' ? 'selected' : ''}>🏢 Doanh nghiệp (B2B)</option>
+                                        <option value="B2C" ${c.customerType == 'B2C' ? 'selected' : ''}>👤 Cá nhân (B2C)</option>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select name="tier" class="form-select form-select-sm form-select-custom">
+                                        <option value="Bạc" ${c.tierName == 'Bạc' ? 'selected' : ''}>🥈 Bạc</option>
+                                        <option value="Vàng" ${c.tierName == 'Vàng' ? 'selected' : ''}>🥇 Vàng</option>
+                                        <option value="Kim Cương" ${c.tierName == 'Kim Cương' ? 'selected' : ''}>💎 Kim Cương</option>
+                                    </select>
+                                </td>
+
+                                <td class="text-center">
+                                    <button class="btn btn-success btn-sm btn-save" name="action" value="update">
+                                        <i class="bi bi-check-all me-1"></i> Lưu
+                                    </button>
+                                </td>
+                            </form>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white py-3 border-top-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Hiển thị <strong>${list.size()}</strong> kết quả</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled"><span class="page-link">Trước</span></li>
+                        <li class="page-item active"><span class="page-link">1</span></li>
+                        <li class="page-item"><span class="page-link">Sau</span></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

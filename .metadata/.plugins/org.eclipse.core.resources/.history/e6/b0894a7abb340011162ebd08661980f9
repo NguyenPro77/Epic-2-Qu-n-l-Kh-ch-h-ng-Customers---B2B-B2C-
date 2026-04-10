@@ -1,0 +1,75 @@
+package com.crm.controller;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import com.crm.dao.CustomerDAO;
+
+@WebServlet("/customers")
+public class CustomerServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private CustomerDAO dao;
+
+    public void init() {
+        dao = new CustomerDAO();
+        System.out.println("CustomerServlet loaded"); // debug
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        String action = request.getParameter("action");
+
+        try {
+
+            // 👉 nếu không có action thì mặc định là list
+            if (action == null) {
+                action = "list";
+            }
+
+            switch (action) {
+
+                // 🔥 CONVERT LEAD → CUSTOMER
+                case "convert":
+                    convert(request, response);
+                    break;
+
+                // 🔥 HIỂN THỊ DANH SÁCH CUSTOMER
+                default:
+                    request.setAttribute("list", dao.getAll());
+                    request.getRequestDispatcher("/customer-list.jsp").forward(request, response);
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<h3>Lỗi: " + e.getMessage() + "</h3>");
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        doGet(request, response);
+    }
+
+    // 🔥 HÀM CONVERT
+    private void convert(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        int leadId = Integer.parseInt(request.getParameter("id"));
+
+        dao.convertFromLead(leadId);
+
+        // 👉 redirect về trang customer
+        response.sendRedirect("customers");
+    }
+}

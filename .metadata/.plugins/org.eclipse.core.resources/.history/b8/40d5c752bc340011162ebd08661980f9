@@ -1,0 +1,112 @@
+package com.crm.controller;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import com.crm.dao.CustomerDAO;
+
+@WebServlet("/customers")
+public class CustomerServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    private CustomerDAO dao;
+
+    public void init() {
+        dao = new CustomerDAO();
+        System.out.println("✅ CustomerServlet loaded");
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // FIX FONT
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        String action = request.getParameter("action");
+
+        try {
+
+            // 👉 mặc định list
+            if (action == null || action.trim().equals("")) {
+                action = "list";
+            }
+
+            switch (action) {
+
+                // 🔥 CONVERT LEAD → CUSTOMER
+                case "convert":
+                    convert(request, response);
+                    break;
+
+                // 🔥 UPDATE CUSTOMER
+                case "update":
+                    update(request, response);
+                    break;
+
+                // 🔥 HIỂN THỊ DANH SÁCH
+                default:
+                    request.setAttribute("list", dao.getAll());
+                    request.getRequestDispatcher("/customer-list.jsp").forward(request, response);
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("<h3 style='color:red'>Lỗi: " + e.getMessage() + "</h3>");
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        doGet(request, response);
+    }
+
+    // 🔥 CONVERT LEAD → CUSTOMER
+    private void convert(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        String idStr = request.getParameter("id");
+
+        if (idStr == null || idStr.equals("")) {
+            throw new Exception("Thiếu ID lead");
+        }
+
+        int id = Integer.parseInt(idStr);
+
+        dao.convertFromLead(id);
+
+        System.out.println("✅ Convert Lead ID = " + id);
+
+        response.sendRedirect("customers");
+    }
+
+    // 🔥 UPDATE CUSTOMER (SAVE)
+    private void update(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        String idStr = request.getParameter("id");
+        String type = request.getParameter("type");
+        String tier = request.getParameter("tier");
+
+        if (idStr == null || type == null || tier == null) {
+            throw new Exception("Thiếu dữ liệu update");
+        }
+
+        int id = Integer.parseInt(idStr);
+
+        dao.updateCustomer(id, type, tier);
+
+        System.out.println("✅ Update Customer ID = " + id +
+                " | Type = " + type +
+                " | Tier = " + tier);
+
+        response.sendRedirect("customers");
+    }
+}

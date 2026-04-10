@@ -1,0 +1,88 @@
+package com.crm.dao;
+
+import java.sql.*;
+import java.util.*;
+import com.crm.model.Lead;
+
+public class LeadDAO {
+
+	private String jdbcURL = "jdbc:mysql://localhost:3306/crm_qlbanhang";
+	private String jdbcUsername = "root";
+	private String jdbcPassword = ""; 
+
+    private Connection getConnection() {
+        Connection conn = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+    public List<Lead> getAll() {
+        List<Lead> list = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM leads");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Lead(
+                        rs.getInt("id"),
+                        rs.getString("company_name"),
+                        rs.getString("contact_name"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("customer_type"),
+                        rs.getString("customer_level")
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void insert(Lead l) throws SQLException {
+        Connection conn = getConnection();
+
+        String sql = "INSERT INTO leads(" +
+                "company_name, contact_name, phone, email, " +
+                "customer_type, customer_level, " +
+                "address, expected_revenue, service_interest, website, " +
+                "source, campaign, tax_code, citizen_id, description, status" +
+                ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, l.getCompanyName());
+        ps.setString(2, l.getContactName());
+        ps.setString(3, l.getPhone());
+        ps.setString(4, l.getEmail());
+        ps.setString(5, l.getCustomerType());
+        ps.setString(6, l.getCustomerLevel());
+
+        // 👇 DEFAULT VALUE cho các cột còn lại
+        ps.setString(7, "");              // address
+        ps.setDouble(8, 0);               // expected_revenue
+        ps.setString(9, "");              // service_interest
+        ps.setString(10, "");             // website
+        ps.setString(11, "Web");          // source
+        ps.setString(12, "None");         // campaign
+        ps.setString(13, "");             // tax_code
+        ps.setString(14, "");             // citizen_id
+        ps.setString(15, "Khách mới");    // description
+        ps.setString(16, "New");          // status
+
+        ps.executeUpdate();
+    }
+    public void delete(int id) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM leads WHERE id=?");
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    }
+}

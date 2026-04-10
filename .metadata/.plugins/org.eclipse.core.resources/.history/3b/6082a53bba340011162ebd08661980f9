@@ -1,0 +1,56 @@
+package com.crm.dao;
+
+import java.sql.*;
+import java.util.*;
+import com.crm.model.Customer;
+
+public class CustomerDAO {
+
+    private String jdbcURL = "jdbc:mysql://localhost:3306/crm_qlbanhang";
+    private String jdbcUsername = "root";
+    private String jdbcPassword = "";
+
+    private Connection getConnection() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Customer> getAll() {
+        List<Customer> list = new ArrayList<>();
+
+        try {
+            Connection conn = getConnection();
+
+            String sql = "SELECT c.*, t.tier_name " +
+                         "FROM customers c " +
+                         "LEFT JOIN customer_tiers t ON c.tier_id = t.id " +
+                         "WHERE c.is_deleted = 0";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Customer c = new Customer(
+                        rs.getInt("id"),
+                        rs.getString("customer_code"),
+                        rs.getString("name"),
+                        rs.getString("phone"),
+                        rs.getString("email"),
+                        rs.getString("customer_type"),
+                        rs.getString("tier_name")
+                );
+                list.add(c);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+}

@@ -1,0 +1,170 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page import="java.util.*" %>
+
+<%
+    // MOCK DATA nếu DB rỗng
+    List<Map<String, String>> mockList = new ArrayList<>();
+
+    String[][] data = {
+        {"1","KH001", "Công ty TNHH AI", "0901234567", "ai@gmail.com", "B2B", "Kim Cương"},
+        {"2","KH002", "Nguyễn Văn A", "0911222333", "a@gmail.com", "B2C", "Vàng"},
+        {"3","KH003", "Công ty ABC", "0988888888", "abc@gmail.com", "B2B", "Bạc"}
+    };
+
+    for (String[] row : data) {
+        Map<String, String> c = new HashMap<>();
+        c.put("id", row[0]);
+        c.put("customerCode", row[1]);
+        c.put("name", row[2]);
+        c.put("phone", row[3]);
+        c.put("email", row[4]);
+        c.put("customerType", row[5]);
+        c.put("tierName", row[6]);
+        mockList.add(c);
+    }
+
+    request.setAttribute("mockList", mockList);
+%>
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Khách hàng</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { background-color: #f8f9fa; }
+        .table-main { background: white; border-radius: 10px; padding: 20px; }
+        select { min-width: 100px; }
+    </style>
+</head>
+
+<body class="p-4">
+
+<div class="container-fluid">
+
+    <h3 class="mb-4">📋 Danh sách Khách hàng</h3>
+
+    <div class="table-main">
+        <table class="table table-hover">
+
+            <thead class="table-primary">
+                <tr>
+                    <th>Mã KH</th>
+                    <th>Tên</th>
+                    <th>Liên hệ</th>
+                    <th>Loại</th>
+                    <th>Hạng</th>
+                    <th>Lưu</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <!-- ================= DB DATA ================= -->
+            <c:if test="${not empty list}">
+                <c:forEach var="c" items="${list}">
+                <tr>
+
+                    <form action="customers" method="post">
+
+                        <td>
+                            ${c.customerCode}
+                            <input type="hidden" name="id" value="${c.id}">
+                        </td>
+
+                        <td>${c.name}</td>
+
+                        <td>
+                            ${c.phone}<br>
+                            <small>${c.email}</small>
+                        </td>
+
+                        <!-- TYPE -->
+                        <td>
+                            <select name="type" class="form-select form-select-sm">
+                                <option value="B2B" ${c.customerType == 'B2B' ? 'selected' : ''}>B2B</option>
+                                <option value="B2C" ${c.customerType == 'B2C' ? 'selected' : ''}>B2C</option>
+                            </select>
+                        </td>
+
+                        <!-- TIER -->
+                        <td>
+                            <select name="tier" class="form-select form-select-sm">
+                                <option ${c.tierName == 'Vàng' ? 'selected' : ''}>Vàng</option>
+                                <option ${c.tierName == 'Bạc' ? 'selected' : ''}>Bạc</option>
+                                <option ${c.tierName == 'Kim Cương' ? 'selected' : ''}>Kim Cương</option>
+                            </select>
+                        </td>
+
+                        <!-- SAVE -->
+                        <td>
+                            <button class="btn btn-success btn-sm" name="action" value="update">
+                                💾 Lưu
+                            </button>
+                        </td>
+
+                    </form>
+
+                </tr>
+                </c:forEach>
+            </c:if>
+
+            <!-- ================= MOCK DATA ================= -->
+            <c:if test="${empty list}">
+                <c:forEach var="c" items="${mockList}">
+                <tr>
+
+                    <form action="customers" method="post">
+
+                        <td>
+                            ${c.customerCode}
+                            <input type="hidden" name="id" value="${c.id}">
+                        </td>
+
+                        <td>${c.name}</td>
+
+                        <td>
+                            ${c.phone}<br>
+                            <small>${c.email}</small>
+                        </td>
+
+                        <td>
+                            <select name="type" class="form-select form-select-sm">
+                                <option value="B2B" ${c.customerType == 'B2B' ? 'selected' : ''}>B2B</option>
+                                <option value="B2C" ${c.customerType == 'B2C' ? 'selected' : ''}>B2C</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <select name="tier" class="form-select form-select-sm">
+                                <option ${c.tierName == 'Vàng' ? 'selected' : ''}>Vàng</option>
+                                <option ${c.tierName == 'Bạc' ? 'selected' : ''}>Bạc</option>
+                                <option ${c.tierName == 'Kim Cương' ? 'selected' : ''}>Kim Cương</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <button class="btn btn-success btn-sm" name="action" value="update">
+                                💾 Lưu
+                            </button>
+                        </td>
+
+                    </form>
+
+                </tr>
+                </c:forEach>
+            </c:if>
+
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

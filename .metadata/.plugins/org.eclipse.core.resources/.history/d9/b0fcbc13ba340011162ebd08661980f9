@@ -1,0 +1,37 @@
+package com.crm.controller;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import com.crm.dao.CustomerDAO;
+
+@WebServlet("/customers")
+public class CustomerServlet extends HttpServlet {
+    private CustomerDAO dao;
+
+    public void init() {
+        dao = new CustomerDAO();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        try {
+            request.setAttribute("list", dao.getAll());
+            request.getRequestDispatcher("/customer-list.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Lỗi: " + e.getMessage());
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}

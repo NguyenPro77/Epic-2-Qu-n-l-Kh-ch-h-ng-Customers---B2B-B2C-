@@ -1,0 +1,47 @@
+package com.crm.model;
+
+public class Customer {
+
+    private int id;
+    private String customerCode;
+    private String name;
+    private String phone;
+    private String email;
+    private String customerType;
+    private String tierName;
+
+    // 🔥 Constructor rỗng (QUAN TRỌNG - tránh lỗi JSP/DAO)
+    public Customer() {
+    }
+
+    // 🔥 Constructor đầy đủ
+    public Customer(int id, String customerCode, String name,
+                    String phone, String email,
+                    String customerType, String tierName) {
+        this.id = id;
+        this.customerCode = customerCode;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.customerType = customerType;
+        this.tierName = tierName;
+    }
+
+    // 🔥 Getter
+    public int getId() { return id; }
+    public String getCustomerCode() { return customerCode; }
+    public String getName() { return name; }
+    public String getPhone() { return phone; }
+    public String getEmail() { return email; }
+    public String getCustomerType() { return customerType; }
+    public String getTierName() { return tierName; }
+
+    // 🔥 Setter (nên có để sau này dùng linh hoạt)
+    public void setId(int id) { this.id = id; }
+    public void setCustomerCode(String customerCode) { this.customerCode = customerCode; }
+    public void setName(String name) { this.name = name; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setEmail(String email) { this.email = email; }
+    public void setCustomerType(String customerType) { this.customerType = customerType; }
+    public void setTierName(String tierName) { this.tierName = tierName; }
+}

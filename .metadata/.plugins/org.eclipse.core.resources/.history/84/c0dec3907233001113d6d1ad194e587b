@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thêm khách hàng</title>
+</head>
+<body>
+
+<h2>Thêm khách hàng</h2>
+
+<form action="leads?action=insert" method="post">
+
+    Company: <input type="text" name="company_name"><br><br>
+
+    Name: <input type="text" name="contact_name"><br><br>
+
+    Phone: <input type="text" name="phone"><br><br>
+
+    Email: <input type="text" name="email"><br><br>
+
+    Type:
+    <select name="customer_type">
+        <option value="B2B">B2B</option>
+        <option value="B2C">B2C</option>
+    </select><br><br>
+
+    Level:
+    <select name="customer_level">
+        <option value="Vang">Vàng</option>
+        <option value="Bac">Bạc</option>
+        <option value="KimCuong">Kim Cương</option>
+    </select><br><br>
+
+    <button type="submit">💾 Save</button>
+
+</form>
+
+<br>
+<a href="leads">⬅ Quay lại danh sách</a>
+
+</body>
+</html>

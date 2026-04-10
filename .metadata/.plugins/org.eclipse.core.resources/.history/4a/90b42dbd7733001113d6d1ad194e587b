@@ -1,0 +1,41 @@
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Danh sách khách hàng</title>
+</head>
+<body>
+
+<h2>Danh sách khách hàng</h2>
+
+<a href="lead-form.jsp">➕ Thêm khách hàng</a>
+
+<br><br>
+
+<table border="1" cellpadding="10">
+<tr>
+    <th>ID</th>
+    <th>Tên</th>
+    <th>Loại</th>
+    <th>Hạng</th>
+    <th>Action</th>
+</tr>
+
+<c:forEach var="l" items="${list}">
+<tr>
+    <td>${l.id}</td>
+    <td>${l.contactName}</td>
+    <td>${l.customerType}</td>
+    <td>${l.customerLevel}</td>
+    <td>
+        <a href="leads?action=delete&id=${l.id}">❌ Delete</a>
+    </td>
+</tr>
+</c:forEach>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+package com.crm.controller;
+
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import com.crm.dao.LeadDAO;
+import com.crm.model.Lead;
+
+@WebServlet("/leads")
+public class LeadServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L; // thêm luôn cho sạch warning
+    private LeadDAO dao;
+
+    public void init() {
+        dao = new LeadDAO();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // ✅ FIX FONT
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        String action = request.getParameter("action");
+
+        try {
+            if (action == null) action = "list";
+
+            if (action.equals("insert")) {
+                insert(request, response);
+            } else if (action.equals("delete")) {
+                delete(request, response);
+            } else {
+                request.setAttribute("list", dao.getAll());
+                request.getRequestDispatcher("/lead-list.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // ✅ FIX FONT (bắt buộc cho form submit)
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
+
+        doGet(request, response);
+    }
+
+    private void insert(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        Lead l = new Lead(
+                0,
+                request.getParameter("company_name"),
+                request.getParameter("contact_name"),
+                request.getParameter("phone"),
+                request.getParameter("email"),
+                request.getParameter("customer_type"),
+                request.getParameter("customer_level")
+        );
+
+        dao.insert(l);
+        response.sendRedirect("leads");
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        dao.delete(Integer.parseInt(request.getParameter("id")));
+        response.sendRedirect("leads");
+    }
+}
