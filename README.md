@@ -1,6 +1,6 @@
 Báo cáo task: Quản lý Customer & Phân loại khách hàng
 
-Thời gian:** Thứ 4, 05/04/2026
+Thời gian: Thứ 4, 05/04/2026
 
 ---
 
