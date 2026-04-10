@@ -65,120 +65,114 @@ INSERT INTO customers
 (customer_code, name, phone, email, customer_type, tier_id, is_deleted)
 SELECT CONCAT('KH', id), contact_name, phone, email, customer_type, 1, 0
 FROM leads WHERE id = ?
+
 3. Cập nhật loại & hạng khách hàng
-<img width="1919" height="907" alt="image" src="https://github.com/user-attachments/assets/95fba65e-a435-4b2a-a5a9-bc98c3ba4670" />
+
+<img width="691" height="329" alt="image" src="https://github.com/user-attachments/assets/49d79421-2f51-48ca-9445-8d4e3ed22817" />
+
 
 Chức năng:
 
-Chọn trực tiếp trên table:
-
-B2B / B2C
-
-Bạc / Vàng / Kim Cương
+- Chọn trực tiếp trên table:
+  - B2B / B2C
+  - Bạc / Vàng / Kim Cương
 
 Nghiệp vụ:
 
-SQL
+- SQL:
+sql
 UPDATE customers 
 SET customer_type=?, 
     tier_id = (SELECT id FROM customer_tiers WHERE tier_name=?)
 WHERE id=?
-Các chức năng KHÔNG có
-Không thêm customer thủ công
+---
 
-Không xóa customer
+### Các chức năng KHÔNG có
 
-Không sửa thông tin cơ bản (name, phone)
+- Không thêm customer thủ công
+- Không xóa customer
+- Không sửa thông tin cơ bản (name, phone)
 
-Vì:
+**Vì:**
 
-Customer được sinh từ Lead
+- Customer được sinh ra từ quy trình chuyển đổi Lead
+- Đảm bảo tính toàn vẹn của dữ liệu và tránh trùng lặp thông tin khách hàng
 
-Đảm bảo dữ liệu chuẩn & không trùng
+---
 
 Cấu trúc bảng cơ sở dữ liệu
+
 Bảng leads
 
-id: ID
-
-contact_name: Tên
-
-phone: SĐT
-
-email: Email
-
-customer_type: B2B/B2C
-
-status: New / Converted
+- id: ID
+- contact_name: Tên
+- phone: SĐT
+- email: Email
+- customer_type: Phân loại (B2B/B2C)
+- status: Trạng thái (New / Converted)
 
 Bảng customers
 
-id: ID
-
-customer_code: KH001...
-
-name: Tên
-
-phone: SĐT
-
-email: Email
-
-customer_type: B2B/B2C
-
-tier_id: FK
-
-is_deleted: 0/1
+- id: ID
+- customer_code: Mã định danh (KH001...)
+- name: Tên
+- phone: SĐT
+- email: Email
+- customer_type: Phân loại (B2B/B2C)
+- tier_id: Foreign Key liên kết bảng xếp hạng
+- is_deleted: Trạng thái xóa (0/1)
 
 Bảng customer_tiers
 
-1: Bạc
+- 1: Bạc
+- 2: Vàng
+- 3: Kim Cương
 
-2: Vàng
-
-3: Kim Cương
+---
 
 Công Nghệ Sử Dụng
-Core: Java Servlet (Jakarta EE)
 
-Frontend: JSP + JSTL + Bootstrap
+- Core: Java Servlet (Jakarta EE)
+- Frontend: JSP + JSTL + Bootstrap
+- Database: MySQL
+- Data Access: JDBC
+- Server: Apache Tomcat
 
-Database: MySQL
-
-Data Access: JDBC
-
-Server: Apache Tomcat
+---
 
 Cài Đặt & Chạy Dự Án
+
 Yêu cầu hệ thống:
 
-Java 17+
-
-MySQL
-
-Apache Tomcat 10
-
-Git
+- Java 17+
+- MySQL
+- Apache Tomcat 10
+- Git
 
 Hướng dẫn chạy môi trường Local:
 
-Bước 1: Clone repository
-git clone https://github.com/your-repo/crm-leads-mvc.git
-
+- Bước 1: Clone repository**
+  bash
+  git clone [https://github.com/your-repo/crm-leads-mvc.git](https://github.com/your-repo/crm-leads-mvc.git)
 Bước 2: Cấu hình Database
-Tạo database: CREATE DATABASE crm_qlbanhang;
-Cấu hình trong CustomerDAO.java:
 
-private String jdbcURL = "jdbc:mysql://localhost:3306/crm_qlbanhang";
+- Tạo database mới: 
+  `CREATE DATABASE crm_qlbanhang;`
 
-private String jdbcUsername = "root";
-
-private String jdbcPassword = "";
+- Cấu hình thông số kết nối trong file `CustomerDAO.java`:
+  java
+  private String jdbcURL = "jdbc:mysql://localhost:3306/crm_qlbanhang";
+  private String jdbcUsername = "root";
+  private String jdbcPassword = "";
+---
 
 Bước 3: Build & Chạy
 
-Deploy project lên Tomcat
+- Thực hiện Deploy project lên Server Tomcat
+- Khởi động (Run) server
 
-Run server
+---
 
 Bước 4: Truy cập
-http://localhost:8081/CRM_LEADS_MVC/customers
+
+- Đường dẫn hệ thống: `http://localhost:8081/CRM_LEADS_MVC/customers`  
